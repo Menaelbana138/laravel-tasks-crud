@@ -10,7 +10,7 @@ class TaskController extends Controller
     // عرض كل المهام بما فيها المحذوفة مؤقتًا
     public function index()
     {
-        $tasks = Task::withTrashed()->orderBy('created_at', 'desc')->get();
+        $tasks = Task::orderBy('created_at', 'desc')->get();
         return view('tasks.index', compact('tasks'));
     }
 
@@ -56,11 +56,9 @@ class TaskController extends Controller
     }
 
     // حذف المهمة (Soft Delete)
-    public function destroy($id)
+    public function destroy(Task $task)
     {
-        $task = Task::findOrFail($id);
         $task->delete();
-
         return redirect()->route('tasks.index')->with('success', 'تم حذف المهمة مؤقتًا 🗑️');
     }
 
@@ -69,14 +67,12 @@ class TaskController extends Controller
     {
         $task = Task::withTrashed()->findOrFail($id);
         $task->restore();
-
         return redirect()->route('tasks.index')->with('success', 'تم استرجاع المهمة 🔁');
     }
 
     // عرض تفاصيل مهمة معينة
-    public function show($id)
+    public function show(Task $task)
     {
-        $task = Task::withTrashed()->findOrFail($id);
         return view('tasks.show', compact('task'));
     }
 }

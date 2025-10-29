@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tasks Management</title>
+    <title>Users Management</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -18,7 +18,7 @@
             background: white; 
             padding: 30px; 
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0，0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         .header {
             display: flex;
@@ -35,7 +35,7 @@
         }
         .btn { 
             padding: 12px 24px; 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white; 
             text-decoration: none; 
             border-radius: 8px; 
@@ -46,7 +46,7 @@
         }
         .btn:hover { 
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
         .btn-secondary {
             background: #6b7280;
@@ -71,7 +71,7 @@
             border-bottom: 1px solid #e5e7eb;
         }
         th { 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white; 
             font-weight: 600;
             text-transform: uppercase;
@@ -81,25 +81,26 @@
         tr:hover { 
             background: #f9fafb;
         }
-        .status { 
+        .role-badge {
             display: inline-block;
-            padding: 6px 12px; 
-            border-radius: 20px; 
-            color: white; 
-            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 12px;
+            font-weight: 600;
             text-transform: uppercase;
         }
-        .status.pending { 
-            background: #f59e0b; 
+        .role-admin {
+            background: #fef3c7;
+            color: #92400e;
         }
-        .status.done { 
-            background: #10b981; 
+        .role-user {
+            background: #dbeafe;
+            color: #1e40af;
         }
         .actions a { 
             margin: 0 5px; 
             padding: 8px 16px; 
-            text-decoration metric; 
+            text-decoration: none; 
             border-radius: 6px;
             font-size: 14px;
             transition: all 0.2s;
@@ -134,9 +135,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>📋 Tasks Management</h2>
+            <h2>👥 Users Management</h2>
             <div>
-                <a href="{{ route('tasks.create') }}" class="btn">➕ Add New Task</a>
+                <a href="{{ route('users.create') }}" class="btn">➕ Add New User</a>
                 <a href="{{ route('home') }}" class="btn btn-secondary">🏠 Home</a>
             </div>
         </div>
@@ -149,35 +150,36 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Due Date</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($tasks as $task)
+                @forelse($users as $user)
                 <tr>
-                    <td>{{ $task->id }}</td>
-                    <td>{{ $task->title }}</td>
-                    <td>{{ Str::limit($task->description ?? 'No description', 50) }}</td>
-                    <td><span class="status {{ strtolower($task->status) }}">{{ $task->status }}</span></td>
-                    <td>{{ $task->due_date ? $task->due_date->format('Y-m-d') : 'Not set' }}</td>
+                    <td>{{ $user->id }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
                     <td>
-                        <a href="{{ route('tasks.show', $task) }}" class="edit">👁️ View</a>
-                        <a href="{{ route('tasks.edit', $task) }}" class="edit">✏️ Edit</a>
-                        <form action="{{ route('tasks.destroy', $task) }}" method="POST" style="display:inline;">
+                        <span class="role-badge role-{{ strtolower($user->getRoleNames()->first()) }}">
+                            {{ $user->getRoleNames()->first() }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ route('users.edit', $user) }}" class="edit">✏️ Edit</a>
+                        <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this task?')">🗑️ Delete</button>
+                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this user?')">🗑️ Delete</button>
                         </form>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="no-data">
-                        No tasks found. Click "Add New Task" to create one!
+                    <td colspan="5" class="no-data">
+                        No users found. Click "Add New User" to create one!
                     </td>
                 </tr>
                 @endforelse
